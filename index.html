@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Sofary</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .feed {
+      max-width: 600px;
+      margin: auto;
+    }
+
+    .post {
+      background: white;
+      padding: 15px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      text-align: left;
+    }
+
+    .likes {
+      color: gray;
+      font-weight: bold;
+      margin-left: 10px;
+    }
+
+    button {
+      cursor: pointer;
+      padding: 5px 10px;
+      font-size: 14px;
+    }
+    view {
+      color: gray;
+    font-size: 14 px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Sofary</h1>
+
+  <div class="feed">
+
+    <div class="post" data-id="post">
+      <h3>Первый пост</h3>
+      <p>Всем привет как у вас дела?</p>
+      <button onclick="likePost(this)">❤️ </button>
+      <span class="likes">0</span>
+     <p class="views">Просмотры: <span id="a">0</span></p>
+      
+    </div>
+
+    <div class="post" data-id="post">
+      <h3>Второй пост</h3>
+      <p>Текст второго поста</p>
+      <button onclick="likePost(this)">❤️ </button>
+      <span class="likes">0</span>
+      <p class="views">Просмотры: <span id="c">0</span></p>
+    </div>
+
+    <div class="post" data-id="post">
+      <h3>Billi Eiliesh</h3>
+      <p>совсем скоро тут будет много постов</p>
+      <button onclick="likePost(this)">❤️ </button>
+      <span class="likes">0</span>
+      <p class="views">Просмотры: <span id="b">0</span></p>
+      
+    </div>
+
+
+
+
+
+  </div>
+
+  <script>
+     // Функция лайка для любого поста
+    function likePost(button) {
+      const post = button.closest(".post"); // находим родительский пост
+      const postId = post.dataset.id;       // берём уникальный ID
+      const likesSpan = post.querySelector(".likes"); // находим счётчик
+
+      // Получаем текущее количество лайков из браузера
+      let likes = localStorage.getItem(postId + "_likes");
+      if (likes === null) likes = 0;
+
+      // Увеличиваем на 1 и сохраняем
+      likes++;
+      localStorage.setItem(postId + "_likes", likes);
+
+      // Обновляем текст на странице
+      likesSpan.textContent = likes;
+    }
+
+    // При загрузке страницы показываем лайки из localStorage
+    document.querySelectorAll(".post").forEach(post => {
+      const postId = post.dataset.id;
+      const likesSpan = post.querySelector(".likes");
+
+      let likes = localStorage.getItem(postId + "_likes");
+      if (likes === null) likes = 0;
+
+      likesSpan.textContent = likes;
+
+  });
+</script>
+
+
+
+<script>
+  let views = localStorage.getItem("views");
+
+  if (views === null) {
+    views = 0;
+  }
+
+  views = Number(views) + 1;
+  localStorage.setItem("views", views);
+
+  document.getElementById("a").textContent = views;
+  document.getElementById("b").textContent = views;
+   document.getElementById("c").textContent = views;
+</script>
+
+</body>
+</html>
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
