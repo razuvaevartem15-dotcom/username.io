@@ -1,154 +1,182 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <title>Sofary</title>
-
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f2f2f2;
-      padding: 20px;
-      text-align: center;
-    }
-
-    .feed {
-      max-width: 600px;
-      margin: auto;
-    }
-
-    .post {
-      background: white;
-      padding: 15px;
-      margin-bottom: 15px;
-      border-radius: 8px;
-      text-align: left;
-    }
-
-    .likes {
-      color: gray;
-      font-weight: bold;
-      margin-left: 10px;
-    }
-
-    button {
-      cursor: pointer;
-      padding: 5px 10px;
-      font-size: 14px;
-    }
-    view {
-      color: gray;
-    font-size: 14 px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <title>Softny</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+        }
+        /* Форма для нового поста */
+        .new-post {
+            max-width: 600px;
+            margin: 20px auto;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .new-post textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            resize: vertical;
+            margin-bottom: 10px;
+        }
+        .new-post button {
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .new-post button:hover {
+            background: #0056b3;
+        }
+        /* Лента постов */
+        .feed {
+            max-width: 600px;
+            margin: auto;
+        }
+        .post {
+            background: white;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            text-align: left;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .post h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .likes {
+            color: gray;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .like-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 5px;
+        }
+        .views {
+            color: gray;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+    </style>
 </head>
 <body>
+    <h1>Softny</h1>
 
-  <h1>Sofary</h1>
-
-  <div class="feed">
-
-    <div class="post" data-id="post">
-      <h3>Первый пост</h3>
-      <p>Всем привет как у вас дела?</p>
-      <button onclick="likePost(this)">❤️ </button>
-      <span class="likes">0</span>
-     <p class="views">Просмотры: <span id="a">0</span></p>
-      
+    <!-- ФОРМА ДЛЯ ДОБАВЛЕНИЯ НОВОГО ПОСТА -->
+    <div class="new-post">
+        <textarea id="newPostText" placeholder="Что у вас нового?" rows="3"></textarea>
+        <button onclick="addPost()">Опубликовать</button>
     </div>
 
-    <div class="post" data-id="post">
-      <h3>Второй пост</h3>
-      <p>Текст второго поста</p>
-      <button onclick="likePost(this)">❤️ </button>
-      <span class="likes">0</span>
-      <p class="views">Просмотры: <span id="c">0</span></p>
+    <!-- ЛЕНТА ПОСТОВ -->
+    <div class="feed">
+        <!-- Посты будут добавляться сюда автоматически -->
     </div>
 
-    <div class="post" data-id="post">
-      <h3>Billi Eiliesh</h3>
-      <p>совсем скоро тут будет много постов</p>
-      <button onclick="likePost(this)">❤️ </button>
-      <span class="likes">0</span>
-      <p class="views">Просмотры: <span id="b">0</span></p>
-      
-    </div>
+    <script>
+        // Храним посты в localStorage
+        let posts = JSON.parse(localStorage.getItem("posts")) || [];
 
+        // Функция добавления нового поста
+        function addPost() {
+            const text = document.getElementById("newPostText").value;
+            
+            if (text.trim() === "") {
+                alert("Напишите текст поста!");
+                return;
+            }
+            
+            // Создаем новый пост
+            const newPost = {
+                id: Date.now(), // уникальный ID
+                text: text,
+                likes: 0,
+                views: 0,
+                date: new Date().toLocaleString()
+            };
+            
+            // Добавляем в массив
+            posts.unshift(newPost); // добавляем в начало
+            
+            // Сохраняем в localStorage
+            localStorage.setItem("posts", JSON.stringify(posts));
+            
+            // Очищаем поле ввода
+            document.getElementById("newPostText").value = "";
+            
+            // Обновляем ленту
+            renderPosts();
+        }
 
+        // Функция лайка поста
+        function likePost(postId) {
+            const post = posts.find(p => p.id == postId);
+            if (post) {
+                post.likes++;
+                localStorage.setItem("posts", JSON.stringify(posts));
+                renderPosts();
+            }
+        }
 
+        // Функция отображения всех постов
+        function renderPosts() {
+            const feed = document.querySelector(".feed");
+            feed.innerHTML = "";
+            
+            if (posts.length === 0) {
+                feed.innerHTML = '<div class="post"><p>Пока нет постов. Будьте первым!</p></div>';
 
+                return;
+            }
+            
+            // Показываем все посты
+            posts.forEach(post => {
+                const postElement = document.createElement("div");
+                postElement.className = 'post';
+                postElement.innerHTML = `
+                    <h3>Пост от ${post.date}</h3>
+                    <p>${post.text}</p>
+                    <div>
+                        <button class="like-btn" onclick="likePost(${post.id})">❤️</button>
+                        <span class="likes">${post.likes}</span>
+                    </div>
+                    <p class="views">Просмотров: ${post.views}</p>
+                `;
+                feed.appendChild(postElement);
+            });
+        }
 
-  </div>
-
-  <script>
-     // Функция лайка для любого поста
-    function likePost(button) {
-      const post = button.closest(".post"); // находим родительский пост
-      const postId = post.dataset.id;       // берём уникальный ID
-      const likesSpan = post.querySelector(".likes"); // находим счётчик
-
-      // Получаем текущее количество лайков из браузера
-      let likes = localStorage.getItem(postId + "_likes");
-      if (likes === null) likes = 0;
-
-      // Увеличиваем на 1 и сохраняем
-      likes++;
-      localStorage.setItem(postId + "_likes", likes);
-
-      // Обновляем текст на странице
-      likesSpan.textContent = likes;
-    }
-
-    // При загрузке страницы показываем лайки из localStorage
-    document.querySelectorAll(".post").forEach(post => {
-      const postId = post.dataset.id;
-      const likesSpan = post.querySelector(".likes");
-
-      let likes = localStorage.getItem(postId + "_likes");
-      if (likes === null) likes = 0;
-
-      likesSpan.textContent = likes;
-
-  });
-</script>
-
-
-
-<script>
-  let views = localStorage.getItem("views");
-
-  if (views === null) {
-    views = 0;
-  }
-
-  views = Number(views) + 1;
-  localStorage.setItem("views", views);
-
-  document.getElementById("a").textContent = views;
-  document.getElementById("b").textContent = views;
-   document.getElementById("c").textContent = views;
-</script>
-
+        // Увеличиваем просмотры при загрузке страницы
+        window.addEventListener('load', function() {
+            // Увеличиваем просмотры у всех постов
+            posts = posts.map(post => {
+                return { ...post, views: post.views + 1 };
+            });
+            localStorage.setItem("posts", JSON.stringify(posts));
+            
+            // Показываем посты
+            renderPosts();
+        });
+    </script>
 </body>
 </html>
-
-
-
-
-
-
-
- 
-
-
-
-
-
-
-
-
-
-
-
-
-
